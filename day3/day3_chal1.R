@@ -1,4 +1,4 @@
-data <- readLines("day3_input.txt")
+data <- readLines("inputs/day3_input.txt")
 
 comp_split <- function(items){
   

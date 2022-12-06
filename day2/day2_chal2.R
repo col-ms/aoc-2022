@@ -1,6 +1,6 @@
 library(dplyr)
 
-data <- read.table("day2_input.txt")
+data <- read.table("inputs/day2_input.txt")
 
 outcomes <- tibble(
   expand.grid(x = c('A', 'B', 'C'), 

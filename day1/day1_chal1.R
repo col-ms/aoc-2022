@@ -1,6 +1,6 @@
 library(dplyr)
 
-data <- as.numeric(readLines('day1_input.txt'))
+data <- as.numeric(readLines('inputs/day1_input.txt'))
 
 splitAt <- function(x, pos) unname(split(x, cumsum(seq_along(x) %in% pos)))
 
@@ -12,6 +12,6 @@ inv_tots <- unlist(lapply(inv_list, sum))
 
 highest <- max(inv_tots)
 
-write.table(inv_tots, 'day1_inv_totals.txt',
+write.table(inv_tots, 'inputs/day1_inv_totals.txt',
             col.names = FALSE,
             row.names = FALSE)

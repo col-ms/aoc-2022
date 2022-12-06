@@ -1,4 +1,4 @@
-data <- read.table('day2_input.txt')
+data <- read.table('inputs/day2_input.txt')
 
 # A = Rock = X
 # B = Paper = Y

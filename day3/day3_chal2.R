@@ -1,4 +1,4 @@
-data <- readLines("day3_input.txt")
+data <- readLines("inputs/day3_input.txt")
 
 find_dupes <- function(e1, e2, e3){
   
