@@ -1,5 +1,3 @@
-library(dplyr)
-
 data <- readLines("day3_input.txt")
 
 comp_split <- function(items){
