@@ -4,7 +4,7 @@ source("day9/day9_utils.R")
 # read in data
 data <- data_import()
 
-# initialize starting positions for head and tail of the rope
+# initialize starting positions for head and tail of rope
 hpos <- c(0,0)
 tpos <- c(0,0)
 tpos_list <- tpos
