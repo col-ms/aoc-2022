@@ -4,15 +4,6 @@ data <- readLines("inputs/day12_input.txt") |>
   unlist() |>
   matrix(nrow = 41, byrow = TRUE)
 
-# data <- "SabqponmabcryxxlaccszExkacctuvwjabdefghi" |>
-#   strsplit(split = '') |>
-#   unlist() |>
-#   matrix(nrow = 5, byrow = T)
-
-# find the indices of the start and end locations in the matrix
-start <- which(data == "S", arr.ind = TRUE)
-end <- which(data == "E", arr.ind = TRUE)
-
 # define a function to covert letters to numbers
 c2n <- function(c){
   if(c == "E"){return(26)}
@@ -22,8 +13,21 @@ c2n <- function(c){
 
 # define a function to perform breadth-first search (bfs) to find the shortest
 # path between the start and end locations in the matrix
-bfs <- function(data, src, end){
+bfs <- function(data, part = 1, verbose = FALSE){
 
+  # sets target and starting cell based on what part to solve for
+  if(part == 1){
+    src = which(data == "S", arr.ind = TRUE)
+    target = "E"
+  } 
+  else if(part == 2){
+    src = which(data == "E", arr.ind = TRUE)
+    target = "a"
+  }
+  else { # ensures input sanitation from function call
+    return("Invalid part argument. Expected values of 1 or 2.")
+  }
+  
   # find the number of rows and columns in the matrix
   R = nrow(data)
   C = ncol(data)
@@ -33,8 +37,8 @@ bfs <- function(data, src, end){
   sc = src[2]
   
   # store the end location's row and column
-  er = end[1]
-  ed = end[2]
+  #er = end[1]
+  #ed = end[2]
   
   # initialize vectors to store the rows and columns of nodes in the queue
   rq = vector()
@@ -71,14 +75,17 @@ bfs <- function(data, src, end){
     
     # if the current cell is the end location, set the found_end flag to TRUE
     # and break out of the loop
-    if(data[r,c] == 'E'){
+    if(data[r,c] == target){
       found_end = TRUE
       break
     }
     
-    print(paste("r =", r))
-    print(paste("c =", c))
-    
+    # for logging
+    if(verbose){
+      print(paste("r =", r))
+      print(paste("c =", c))
+    }
+      
     # define arrays of row and column deltas to move to the cells directly
     # above, below, to the right, and to the left of the current cell
     dr = c(-1, 1, 0, 0)
@@ -91,32 +98,38 @@ bfs <- function(data, src, end){
       rr = r + dr[i]
       cc = c + dc[i]
       
-      print(paste("checking: ", rr, ',', cc))
+      if(verbose){print(paste("checking: ", rr, ',', cc))}
       
       # the neighbouring cell is out of bounds, skip it
       if(rr < 1 || cc < 1){
-        print("skipping due to < 1 condition")
+        if(verbose){print("skipping due to < 1 condition")}
         next
       }
       if(rr > R || cc > C){
-        print("skipping due to > R|C condition")
+        if(verbose){print("skipping due to > R|C condition")}
         next
       }
       
       # if the neighbouring cell has already been visited, skip it
       if(visited[rr,cc]){
-        print("skipping due to already visited")
+        if(verbose){print("skipping due to already visited")}
         next
       }
       
       # if the height difference between the current cell and the neighbouring
       # cell is larger than 1, skip it (note: the neighbouring cell can be
       # lower than the current cell with no restrictions)
-      if((c2n(data[rr,cc]) - c2n(data[r,c])) > 1){
-        print("skipping due to height condition")
+      if((c2n(data[rr,cc]) - c2n(data[r,c])) > 1 && part == 1){
+        if(verbose){print("skipping due to part 1 height condition")}
         next
       }
       
+      # same as above rule, but for reverse travel (can't step down more than
+      # a 1 height difference)
+      if((c2n(data[r,c]) - c2n(data[rr,cc])) > 1 && part == 2){
+        if(verbose){print("skipping due to part 2 height condition")}
+        next
+      }
       # add the neighbouring cell's row and column to the queues
       rq = c(rq, rr)
       cq = c(cq, cc)
@@ -135,7 +148,7 @@ bfs <- function(data, src, end){
     if(nodes_left_in_layer == 0){
       
       # set the count of nodes left in current layer to the
-      # count of nodes inthe next layer
+      # count of nodes in the next layer
       nodes_left_in_layer = nodes_in_next_layer
       
       # reset the count of nodes in the next layer to 0
@@ -154,4 +167,6 @@ bfs <- function(data, src, end){
   return("Err: end not found")
 }
 
-print(bfs(data, start, end))
+
+print(paste("Part 1:", bfs(data, part = 1, verbose = FALSE)))
+print(paste("Part 2:", bfs(data, part = 2, verbose = FALSE)))
