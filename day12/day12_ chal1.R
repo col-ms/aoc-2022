@@ -1,3 +1,4 @@
+# Read in input data, split in characters, and store in a matrix
 data <- readLines("inputs/day12_input.txt") |>
   strsplit(split = '') |>
   unlist() |>
@@ -8,49 +9,68 @@ data <- readLines("inputs/day12_input.txt") |>
 #   unlist() |>
 #   matrix(nrow = 5, byrow = T)
 
+# find the indices of the start and end locations in the matrix
 start <- which(data == "S", arr.ind = TRUE)
 end <- which(data == "E", arr.ind = TRUE)
 
+# define a function to covert letters to numbers
 c2n <- function(c){
   if(c == "E"){return(26)}
   if(c == "S"){return(1)}
   return(which(letters == c))
 }
 
+# define a function to perform breadth-first search (bfs) to find the shortest
+# path between the start and end locations in the matrix
 bfs <- function(data, src, end){
 
-  R = nrow(data) # find max row number
-  C = ncol(data) # find max col number
+  # find the number of rows and columns in the matrix
+  R = nrow(data)
+  C = ncol(data)
   
-  sr = src[1] # store start row
-  sc = src[2] # store start col
+  # store the start location's row and column
+  sr = src[1]
+  sc = src[2]
   
-  er = end[1] # store end row
-  ed = end[2] # store end col
+  # store the end location's row and column
+  er = end[1]
+  ed = end[2]
   
-  rq = vector() # initialize row queue
-  cq = vector() # initialize col queue
+  # initialize vectors to store the rows and columns of nodes in the queue
+  rq = vector()
+  cq = vector()
   
-  rq = c(rq, sr) # append source row to row queue
-  cq = c(cq, sc) # append source col to col queue
+  # add the start location's row and column to the queue
+  rq = c(rq, sr)
+  cq = c(cq, sc)
   
+  # initialize variables to track the number of moves made, the number of nodes
+  # left in the current layer, the number of nodes in the next layer, and
+  # whether the end location has been found
   move_cnt = 0
   nodes_left_in_layer = 1
   nodes_in_next_layer = 0
   found_end = FALSE
   
-  visited = matrix(FALSE, nrow = R, ncol = C) # initialize matrix 
-                                              # to track visited cells
-  visited[sr,sc] = TRUE # mark start location as visited 
+  # initialize a matrix to track which cells have been visited
+  visited = matrix(FALSE, nrow = R, ncol = C)
   
+  # mark the start location as visited 
+  visited[sr,sc] = TRUE
+  
+  # while there are nodes remaining in the queue...
   while(length(rq)!=0){
   
-    r = rq[1]   # assign first element in row queue as current row
-    rq = rq[-1] # remove first element in row queue
+    # remove the first element in the row queue and assign it as the current row
+    r = rq[1]
+    rq = rq[-1]
     
-    c = cq[1]   # assign first element in col queue as current col
-    cq = cq[-1] # remove first element in col queue
+    # remove the first element in the col queue and assign it as the current col
+    c = cq[1]
+    cq = cq[-1]
     
+    # if the current cell is the end location, set the found_end flag to TRUE
+    # and break out of the loop
     if(data[r,c] == 'E'){
       found_end = TRUE
       break
@@ -59,16 +79,21 @@ bfs <- function(data, src, end){
     print(paste("r =", r))
     print(paste("c =", c))
     
+    # define arrays of row and column deltas to move to the cells directly
+    # above, below, to the right, and to the left of the current cell
     dr = c(-1, 1, 0, 0)
     dc = c(0, 0, 1, -1)
-      
+    
+    # for each of the 4 cells surrounding the current cell  
     for(i in 1:4){
       
+      # calculate the row and column indices of the neighbouring cells
       rr = r + dr[i]
       cc = c + dc[i]
       
       print(paste("checking: ", rr, ',', cc))
       
+      # the neighbouring cell is out of bounds, skip it
       if(rr < 1 || cc < 1){
         print("skipping due to < 1 condition")
         next
@@ -78,32 +103,54 @@ bfs <- function(data, src, end){
         next
       }
       
+      # if the neighbouring cell has already been visited, skip it
       if(visited[rr,cc]){
         print("skipping due to already visited")
         next
       }
+      
+      # if the height difference between the current cell and the neighbouring
+      # cell is larger than 1, skip it (note: the neighbouring cell can be
+      # lower than the current cell with no restrictions)
       if((c2n(data[rr,cc]) - c2n(data[r,c])) > 1){
         print("skipping due to height condition")
         next
       }
       
+      # add the neighbouring cell's row and column to the queues
       rq = c(rq, rr)
       cq = c(cq, cc)
+      
+      # mark the neighbouring cell as visited
       visited[rr,cc] = TRUE
+      
+      # increment the count of nodes in the next layer
       nodes_in_next_layer = nodes_in_next_layer + 1
     }
     
+    # decrement the count of nodes left in the current layer
     nodes_left_in_layer = nodes_left_in_layer - 1
     
+    # if there are no more nodes left in the current layer
     if(nodes_left_in_layer == 0){
+      
+      # set the count of nodes left in current layer to the
+      # count of nodes inthe next layer
       nodes_left_in_layer = nodes_in_next_layer
+      
+      # reset the count of nodes in the next layer to 0
       nodes_in_next_layer = 0
+      
+      # increment the move counter
       move_cnt = move_cnt + 1
     }
   }
+  # the end location was found, return the number of moves it took to get there
   if(found_end){
     return(move_cnt)
   }
+  
+  # if no end was found, return an error message
   return("Err: end not found")
 }
 
