@@ -19,9 +19,10 @@ for(i in seq_along(data)){
 sand <- 0   # initialize sand grain counter
 lx <- 0     # vector to store x pos history
 ly <- 500   # vector to store y pos history
+continue = TRUE
 
-# begins infinite loop
-while(TRUE){
+# begins sand fill loop
+while(continue){
   
   # set current x and y positions to last value in position history vectors
   x = lx[length(lx)]
@@ -31,8 +32,11 @@ while(TRUE){
   repeat{
 
     # if sand has reached the bottom of the cave, 
-    # stop loop and print sand cnt
-    if(x>=nrow(cave)){stop(sand)}
+    # stop loop
+    if(x>=nrow(cave)){
+      continue = FALSE
+      break
+    }
     
     # if there is space for the sand to flow directly downwards,
     # add current pos to history and increment x pos
@@ -64,7 +68,7 @@ while(TRUE){
       if(cave[x,y]!=2){    # and the current location isn't already sand,
         cave[x,y] = 2      # set current location to be sand,
         sand = sand + 1    # update sand count
-        cat(sand, "\r")    # print current sand count
+      # cat(sand, "\r")    # print current sand count
       }
       lx = lx[-length(lx)] # remove last visited position
       ly = ly[-length(ly)] # from history vectors (now occupied by sand)
