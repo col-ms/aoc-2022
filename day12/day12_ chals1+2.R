@@ -170,3 +170,7 @@ bfs <- function(data, part = 1, verbose = FALSE){
 
 print(paste("Part 1:", bfs(data, part = 1, verbose = FALSE)))
 print(paste("Part 2:", bfs(data, part = 2, verbose = FALSE)))
+
+library(microbenchmark)
+microbenchmark(bfs(data, part = 1))
+microbenchmark(bfs(data, part = 2))
