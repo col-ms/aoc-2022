@@ -28,7 +28,7 @@ while(continue){
   x = lx[length(lx)]
   y = ly[length(ly)]
   
-  # begins loop that continues until 'stop' condition is met
+  # begins loop that continues until 'break' condition is met
   repeat{
 
     # if sand has reached the bottom of the cave, 
