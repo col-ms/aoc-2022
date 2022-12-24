@@ -86,7 +86,7 @@ filter(files.df, size <= 100000) %>%
 
 # the prompt used: 
 # Write R code to find the smallest directory within the files.df dataframe 
-# that, if deletec, would ensure the total size of the outermost directory 
+# that, if deleted, would ensure the total size of the outermost directory 
 # (the 'root' directory) would satisfy the equation 70000000 - root >= 30000000
 
 # find the size of the 'root' directory
